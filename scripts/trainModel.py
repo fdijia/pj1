@@ -68,7 +68,7 @@ def save_history(history, filename):
 def train_best_model():
     para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
     model = NeuralNetwork(**para)
-    learning_rate = [0.01, 0.005, 0.0001, 0.00005]
+    learning_rate = [0.008, 0.003, 0.0008, 0.0003]
     train_loss = []
     val_acc = []
     for lr in learning_rate:
