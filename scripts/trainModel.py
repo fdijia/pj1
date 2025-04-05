@@ -78,7 +78,7 @@ def train_best_model():
         val_acc.append(acc)
     test_acc = model.evaluate_model(X_test, y_test)
     history = {'train_loss': train_loss, 'val_acc': val_acc, 'test_acc': test_acc}
-    save_history(history, './model/' + model.name + '.json')
+    save_history(history, './models/' + model.name + '.json')
 
 
 if __name__ == "__main__":
