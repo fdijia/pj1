@@ -1,15 +1,15 @@
 # 从零开始构建三层神经网络分类器，实现图像分类
 ## 架构：
-- **cifar-10-batches-py**          储存数据集
-- **models**                       在parasFinding.py以及trainModel.py中训练的模型储存在这，可以通过文件名读取各参数，使用classifyModel.py中定义的函数解码
-- **scripts**                      代码区域
-  - **classfyModel.py**            模型定义部分
-  - **evaluateModel.py**           模型评估部分，从已经训练完成后保存的文件中读取测试集上的准确率
-  - **parasFinding.py**            自定义各参数并训练和对比
-  - **photoDatasets.py**           数据区域，从cifar-10-batches-py中读取数据
-  - **trainModel.py**              训练模型部分
-  - **visualizeWb.py**             可视化参数部分
-- **visualization**                储存parasFingding.py中训练历史信息，每一组在一个json文件中：{model1.name: {train_loss: [...], val_acc: [...], test_acc: __}, model2...} test_acc是训练过程中最佳模型在测试集上的准确率。还有各组训练的损失和准确率可视化
+- **cifar-10-batches-py**          -- 储存数据集
+- **models**                       -- 在parasFinding.py以及trainModel.py中训练的模型储存在这，可以通过文件名读取各参数，使用classifyModel.py中定义的函数解码
+- **scripts**                      -- 代码区域
+  - **classfyModel.py**            -- 模型定义部分
+  - **evaluateModel.py**           -- 模型评估部分，从已经训练完成后保存的文件中读取测试集上的准确率
+  - **parasFinding.py**            -- 自定义各参数并训练和对比
+  - **photoDatasets.py**           -- 数据区域，从cifar-10-batches-py中读取数据
+  - **trainModel.py**              -- 训练模型部分
+  - **visualizeWb.py**             -- 可视化参数部分
+- **visualization**                -- 储存parasFingding.py中训练历史信息，每一组在一个json文件中：{model1.name: {train_loss: [...], val_acc: [...], test_acc: __}, model2...} test_acc是训练过程中最佳模型在测试集上的准确率。还有各组训练的损失和准确率可视化
 
 
 ## 模型训练
