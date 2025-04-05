@@ -50,6 +50,13 @@ class NeuralNetwork:
             b = np.zeros((1, size2))
             return W, b
 
+    def changeParas(self, learning_rate=None, reg_lambda=None):
+        # 改变参数但不改变模型名字
+        if learning_rate:
+            self.learning_rate = learning_rate
+        if reg_lambda:
+            self.reg_lambda = reg_lambda
+    
     def forward(self, X):
         self.z = []
         self.a = []
