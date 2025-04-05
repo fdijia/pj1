@@ -45,6 +45,10 @@ class NeuralNetwork:
                 self.W.append(W)
                 self.b.append(b)
             
+    def getParas(self):
+        paraDict = {'layer_sizes': self.layer_sizes, 'activations': self.activations, 'learning_rate': self.learning_rate, 'reg_lambda': self.reg_lambda}
+        return paraDict
+    
     def generate_W_b(self, size1, size2):
             W = np.random.randn(size1, size2) * np.sqrt(1. / size1)
             b = np.zeros((1, size2))
