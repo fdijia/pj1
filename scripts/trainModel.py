@@ -65,8 +65,6 @@ def train_model(model, X_train, y_train, epochs=100, batch_size=64):
 if __name__ == "__main__":
     train = CIFAR10('cifar-10-batches-py', train=True)
     X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
-    test = CIFAR10('cifar-10-batches-py', train=False)
-    X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
     model = NeuralNetwork()
     train_model(model, X_train, y_train, epochs=50, batch_size=200)
    

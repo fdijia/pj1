@@ -10,6 +10,8 @@
   model_name: 模型名称, 训练好的模型会根据名称加上各参数保存, 通过后面定义的编码和解码函数确定，注意如果要使用已有的模型，请直接输入模型的名字而不带路径，模型储存在models文件夹下
   如果给了函数名则各参数由函数名决定， 否则由各参数决定
   如果没有现有模型则随机生成W b进行初始化
+- def changeParas(self, learning_rate=None, reg_lambda=None)
+  改变参数
 - def forward(self, X)
   前向
 - def backward(self, X, y, learning_rate)
