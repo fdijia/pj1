@@ -74,8 +74,8 @@ def train_best_model():
     for lr in learning_rate:
         model.changeParas(learning_rate=lr)
         loss, acc = train_model(model, X_train, y_train, epochs=100, batch_size=200)
-        train_loss.append(loss)
-        val_acc.append(acc)
+        train_loss.extend(loss)
+        val_acc.extend(acc)
     test_acc = model.evaluate_model(X_test, y_test)
     history = {'train_loss': train_loss, 'val_acc': val_acc, 'test_acc': test_acc}
     save_history(history, './models/' + model.name + '.json')

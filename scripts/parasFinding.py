@@ -95,7 +95,37 @@ def plot_hyperparameter_performance(history, filename='para.png'):
     plt.savefig(filename, dpi=300, bbox_inches='tight')
     plt.show()
 
- 
+def visualize_history(filename, save_filename):
+    name = filename[9:-5]
+    with open(filename, 'r') as f:
+        metrics = json.load(f)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    config = decode_model_name(name)
+    lr = config['learning_rate']
+    reg = config['reg_lambda']
+    layer_sizes = config['layer_sizes']
+    label = f"LR={lr}, λ={reg}\nLayers={'->'.join(list(map(str, layer_sizes)))}"
+    epochs = np.arange(1, len(metrics['val_acc']) + 1)
+
+    ax1.plot(epochs, metrics['val_acc'], label=label)
+    ax2.plot(epochs, metrics['train_loss'],label=label)
+
+    ax1.set_title('Validation Accuracy vs. Epochs', fontsize=14)
+    ax1.set_xlabel('Epochs', fontsize=12)
+    ax1.set_ylabel('Accuracy', fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    
+    ax2.set_title('Training Loss vs. Epochs', fontsize=14)
+    ax2.set_xlabel('Epochs', fontsize=12)
+    ax2.set_ylabel('Loss', fontsize=12)
+    ax2.grid(True, alpha=0.3)
+    ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    
+    plt.tight_layout()
+    plt.savefig(save_filename, dpi=300, bbox_inches='tight')
+    plt.show()
+
 
 def save_history_json(history, filename):
     existing = {}
@@ -113,7 +143,4 @@ if __name__ == '__main__':
     #     history = compare_paras(para)
     #     save_history_json(history, f'./visualization/paras{i+1}.json')
     #     plot_hyperparameter_performance(history, filename=f'./visualization/paras{i+1}.png')
-    filename = './visualization/paras1.json'
-    with open(filename, 'r') as f:
-        history = json.load(f)
-    plot_hyperparameter_performance(history, filename='./visualization/paras1.png')
+    visualize_history('models/model3072r128_10lr0.01rl0.001.npz.json', 'visualization/bestmodel.png')

@@ -4,7 +4,8 @@ from classifyModel import NeuralNetwork
 
 def plot_weight_heatmap(W, layer_name):
     plt.figure(figsize=(12, 8))
-    sns.heatmap(cmap='coolwarm',
+    sns.heatmap(W,
+                cmap='coolwarm',
                 center=0,
                 xticklabels=False,
                 yticklabels=False)
