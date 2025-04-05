@@ -74,12 +74,12 @@ if __name__ == "__main__":
     X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
     para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
     model = NeuralNetwork(**para)
-    learning_rate = [0.01, 0.05, 0.001]
+    learning_rate = [0.01, 0.005, 0.0001, 0.00005]
     train_loss = []
     val_acc = []
     for lr in learning_rate:
         model.changeParas(learning_rate=lr)
-        loss, acc = train_model(model, X_train, y_train, epochs=150, batch_size=200)
+        loss, acc = train_model(model, X_train, y_train, epochs=100, batch_size=200)
         train_loss.append(loss)
         val_acc.append(acc)
     test_acc = model.evaluate_model(X_test, y_test)
