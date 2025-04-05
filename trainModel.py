@@ -1,14 +1,16 @@
 import numpy as np
-import json
 from classifyModel import NeuralNetwork
 from photoDataset import CIFAR10
 from sklearn.model_selection import train_test_split
 
 
-def train_model(model, X_train, y_train, learning_rate=0.01, reg_lambda=0.01, epochs=100, batch_size=64):
+def train_model(model, X_train, y_train, epochs=100, batch_size=64):
     best_val_acc = 0
     best_params = None
-    
+    learning_rate = model.learning_rate
+    losses_history = []
+    val_acc_history = []
+
     for epoch in range(epochs):
         X_train_new, X_val, y_train_new, y_val = train_test_split(X_train, y_train, test_size=0.1, random_state=49)
 
@@ -27,39 +29,37 @@ def train_model(model, X_train, y_train, learning_rate=0.01, reg_lambda=0.01, ep
             model.forward(X_batch)
             
             # 反向传播
-            model.backward(X_batch, y_batch, learning_rate, reg_lambda)
+            model.backward(X_batch, y_batch, learning_rate)
         
-        # 计算验证集准确率
-        val_acc = evaluate_model(model, X_val, y_val)
+        # 计算训练集损失
+        y_train_pred = model.forward(X_train)
+        loss = model.compute_loss(y_train_pred, y_train)
+        losses_history.append(loss)
+
+        # 根据验证集指标自动保存最优的模型权重
+        val_acc = model.evaluate_model(X_val, y_val)
+        val_acc_history.append(val_acc)
         if val_acc >= best_val_acc:
             best_val_acc = val_acc
-            best_params = {
-                'W1': model.W1,
-                'b1': model.b1,
-                'W2': model.W2,
-                'b2': model.b2
-            }
+            best_params = {'W': model.W,'b': model.b}
         
         # 学习率下降
-        learning_rate *= 0.9
+        learning_rate *= 1 - np.sqrt(learning_rate / epochs)
 
         print(f'Epoch {epoch+1}/{epochs}, Validation Accuracy: {val_acc:.4f}')
     
     # 保存最佳模型参数
-    txt_dict = {'W1': best_params['W1'].tolist(), 'b1': best_params['b1'].tolist(), 'W2': best_params['W2'].tolist(), 'b2': best_params['b2'].tolist()}
-    with open('model.json', 'w') as f:
-        json.dump(txt_dict, f, indent=4)
+    model.W, model.b = best_params['W'], best_params['b']
+    save_dict = {}
+    for i, (w, b) in enumerate(zip(best_params['W'], best_params['b'])):
+        save_dict[f'W{i+1}'] = w
+        save_dict[f'b{i+1}'] = b
 
-    model.W1, model.b1, model.W2, model.b2 = best_params['W1'], best_params['b1'], best_params['W2'], best_params['b2']
-    return model
+    np.savez_compressed(model.name, **save_dict)
+
+    return losses_history, val_acc_history
 
 
-def evaluate_model(model, X, y):
-    predictions = model.forward(X)
-    predicted_labels = np.argmax(predictions, axis=1)
-    true_labels = np.argmax(y, axis=1)
-    accuracy = np.mean(predicted_labels == true_labels)
-    return accuracy
 
 
 if __name__ == "__main__":
@@ -67,5 +67,5 @@ if __name__ == "__main__":
     X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
     test = CIFAR10('cifar-10-batches-py', train=False)
     X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
-    model = NeuralNetwork(input_size=32*32*3, hidden_size=60, output_size=10, activation='relu')
-    train_model(model, X_train, y_train, learning_rate=0.1, epochs=100, batch_size=100)
+    model = NeuralNetwork()
+    train_model(model, X_train, y_train, epochs=50, batch_size=200)
