@@ -65,13 +65,7 @@ def save_history(history, filename):
         json.dump(history, f, indent=4)
     print(f"History saved to {filename}")
 
-
-if __name__ == "__main__":
-    # final train
-    train = CIFAR10('cifar-10-batches-py', train=True)
-    X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
-    test = CIFAR10('cifar-10-batches-py', train=False)
-    X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
+def train_best_model():
     para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
     model = NeuralNetwork(**para)
     learning_rate = [0.01, 0.005, 0.0001, 0.00005]
@@ -85,4 +79,13 @@ if __name__ == "__main__":
     test_acc = model.evaluate_model(X_test, y_test)
     history = {'train_loss': train_loss, 'val_acc': val_acc, 'test_acc': test_acc}
     save_history(history, './model/' + model.name + '.json')
+
+
+if __name__ == "__main__":
+    # final train
+    train = CIFAR10('cifar-10-batches-py', train=True)
+    X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
+    test = CIFAR10('cifar-10-batches-py', train=False)
+    X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
+    train_best_model()
    
