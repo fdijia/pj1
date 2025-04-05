@@ -8,8 +8,9 @@
   - parasFinding.py/自定义各参数并训练和对比
   - photoDatasets.py/数据区域，从cifar-10-batches-py中读取数据
   - trainModel.py/训练模型部分
-  - visualizaWb.py/可视化参数部分
+  - visualizeWb.py/可视化参数部分
 - visualization/储存parasFingding.py中训练历史信息，每一组在一个json文件中：{model1.name: {train_loss: [], val_acc: [], test_acc: _}, ...} test_acc是训练过程中最佳模型在测试集上的准确率。还有各组训练的损失和准确率可视化
+
 
 ## 模型训练
 - def train_model(model, X_train, y_train, epochs=100, batch_size=64) -> losses_history, val_acc_history
