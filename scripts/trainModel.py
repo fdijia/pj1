@@ -2,7 +2,8 @@ import numpy as np
 from classifyModel import NeuralNetwork
 from photoDataset import CIFAR10
 from sklearn.model_selection import train_test_split
-
+import json
+import os
 
 def train_model(model, X_train, y_train, epochs=100, batch_size=64):
     best_val_acc = 0
@@ -59,12 +60,29 @@ def train_model(model, X_train, y_train, epochs=100, batch_size=64):
 
     return losses_history, val_acc_history
 
-
+def save_history(history, filename):
+    with open(filename, 'w') as f:
+        json.dump(history, f, indent=4)
+    print(f"History saved to {filename}")
 
 
 if __name__ == "__main__":
+    # final train
     train = CIFAR10('cifar-10-batches-py', train=True)
     X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
-    model = NeuralNetwork()
-    train_model(model, X_train, y_train, epochs=50, batch_size=200)
+    test = CIFAR10('cifar-10-batches-py', train=False)
+    X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
+    para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
+    model = NeuralNetwork(**para)
+    learning_rate = [0.01, 0.05, 0.001]
+    train_loss = []
+    val_acc = []
+    for lr in learning_rate:
+        model.changeParas(learning_rate=lr)
+        loss, acc = train_model(model, X_train, y_train, epochs=150, batch_size=200)
+        train_loss.append(loss)
+        val_acc.append(acc)
+    test_acc = model.evaluate_model(X_test, y_test)
+    history = {'train_loss': train_loss, 'val_acc': val_acc, 'test_acc': test_acc}
+    save_history(history, './model/' + model.name + '.json')
    
