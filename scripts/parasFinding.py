@@ -103,10 +103,7 @@ def save_history_json(history, filename):
 
 if __name__ == '__main__':
     paras = parasFinding()
-    # for i, para in enumerate(paras):
-    #     history = compare_paras(paras)
-    #     save_history_json(history, f'paras{i+1}.json')
-    #     plot_hyperparameter_performance(history, filename=f'paras{i+1}.png')
-    history = compare_paras(paras[0])
-    save_history_json(history, 'paras1.json')
-    plot_hyperparameter_performance(history, filename='paras1.png')
+    for i, para in enumerate(paras):
+        history = compare_paras(para)
+        save_history_json(history, f'./visualization/paras{i+1}.json')
+        plot_hyperparameter_performance(history, filename=f'./visualization/paras{i+1}.png')

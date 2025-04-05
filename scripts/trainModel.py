@@ -55,7 +55,7 @@ def train_model(model, X_train, y_train, epochs=100, batch_size=64):
         save_dict[f'W{i+1}'] = w
         save_dict[f'b{i+1}'] = b
 
-    np.savez_compressed(model.name, **save_dict)
+    np.savez_compressed('./models/' + model.name, **save_dict)
 
     return losses_history, val_acc_history
 
@@ -69,3 +69,4 @@ if __name__ == "__main__":
     X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
     model = NeuralNetwork()
     train_model(model, X_train, y_train, epochs=50, batch_size=200)
+   

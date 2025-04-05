@@ -8,6 +8,8 @@ class NeuralNetwork:
     activations: 激活函数, 可以是一个字符串, 也可以是一个列表, 如果没有指定, 默认是都是'relu;, 层数与layer_sizes对应
     model_name: 模型名称, 默认是'model', 训练好的模型会根据名称加上layer_sizes保存, 例如model3072_200_60_10.npz
     如果给了函数明则各参数由函数名决定
+
+    注意如果要使用已有的模型，请直接输入模型的名字而不带路径，模型储存在models文件夹下
     """
     def __init__(self, layer_sizes=[3072, 256, 64, 10], activations='relu', learning_rate=0.01, reg_lambda=0.01, model_name=None):
         if model_name:

@@ -1,4 +1,4 @@
-from classifyModel import NeuralNetwork, decode_model_name
+from classifyModel import decode_model_name
 from photoDataset import CIFAR10
 import numpy as np
 import os
@@ -8,9 +8,9 @@ X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
 
 def find_file():
     files = []
-    for file in os.listdir('.'):
+    for file in os.listdir('./visualization'):
         if file.endswith('.json'):
-            files.append(file)
+            files.append('visualization/' + file)
     return files
         
 def test_file(name, acc):
@@ -19,9 +19,7 @@ def test_file(name, acc):
     reg = config['reg_lambda']
     layer_sizes = config['layer_sizes']
     label = f"LR={lr}, λ={reg}\nLayers={'->'.join(list(map(str, layer_sizes)))}"
-
     print("model of", label, ", accuracy:", acc)
-    return acc
 
 
 if __name__ == "__main__":
