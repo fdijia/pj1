@@ -54,6 +54,9 @@ class NeuralNetwork:
             W = np.random.randn(size1, size2) * np.sqrt(1. / size1)
             b = np.zeros((1, size2))
             return W, b
+        
+    def deleteModel(self):
+        os.remove('./models/' + self.name)
 
     def changeParas(self, learning_rate=None, reg_lambda=None):
         # 改变参数但不改变模型名字

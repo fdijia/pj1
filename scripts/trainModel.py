@@ -5,7 +5,13 @@ from sklearn.model_selection import train_test_split
 import json
 import os
 
-def train_model(model, X_train, y_train, epochs=100, batch_size=64):
+train = CIFAR10('cifar-10-batches-py', train=True)
+X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
+test = CIFAR10('cifar-10-batches-py', train=False)
+X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
+
+
+def train_model(model, X_train=X_train, y_train=y_train, epochs=100, batch_size=64):
     best_val_acc = 0
     best_params = None
     learning_rate = model.learning_rate
@@ -61,12 +67,12 @@ def train_model(model, X_train, y_train, epochs=100, batch_size=64):
     return losses_history, val_acc_history
 
 def save_history(history, filename):
+    """自己提供相对路径以及文件名全称，包括.json"""
     with open(filename, 'w') as f:
         json.dump(history, f, indent=4)
     print(f"History saved to {filename}")
 
-def train_best_model():
-    para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
+def train_best_model(para):
     model = NeuralNetwork(**para)
     learning_rate = [0.008, 0.003, 0.0008, 0.0003]
     train_loss = []
@@ -83,9 +89,6 @@ def train_best_model():
 
 if __name__ == "__main__":
     # final train
-    train = CIFAR10('cifar-10-batches-py', train=True)
-    X_train, y_train = train.data / 255.0, np.eye(10)[train.labels]
-    test = CIFAR10('cifar-10-batches-py', train=False)
-    X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
-    train_best_model()
+    para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
+    train_best_model(para)
    

@@ -142,10 +142,14 @@ def save_history_json(history, filename):
     with open(filename, 'w') as f:
         json.dump(history, f, indent=4)
     print(f"History saved to {filename}")
-
-if __name__ == '__main__':
+    
+def main():
     paras = parasFinding()
     for i, para in enumerate(paras):
         history = compare_paras(para)
         save_history_json(history, f'paras{i+1}.json')
         plot_hyperparameter_performance(history, filename=f'paras{i+1}.png')
+    
+
+if __name__ == '__main__':
+    main()
