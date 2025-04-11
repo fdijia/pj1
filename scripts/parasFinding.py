@@ -53,7 +53,7 @@ def compare_paras(paras_list):
     
     return history
 
-def plot_hyperparameter_performance(history, filename='para.png'):
+def plot_hyperparameter_performance(history, save_filename=None):
     colors = plt.cm.tab20.colors[:12]
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
@@ -92,11 +92,14 @@ def plot_hyperparameter_performance(history, filename='para.png'):
     ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     
     plt.tight_layout()
-    plt.savefig(filename, dpi=300, bbox_inches='tight')
+    if save_filename:
+        plt.savefig('visualization/' + save_filename, dpi=300, bbox_inches='tight')
     plt.show()
 
-def visualize_history(filename, save_filename):
-    name = filename[9:-5]
+def visualize_history(filename, save_filename=None):
+    """ 可视化model中的.npz.json文件的训练历史 即bestmodel的训练历史"""
+    filename = 'models/' + filename
+    name = filename[:-5]
     with open(filename, 'r') as f:
         metrics = json.load(f)
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
@@ -123,12 +126,15 @@ def visualize_history(filename, save_filename):
     ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     
     plt.tight_layout()
-    plt.savefig(save_filename, dpi=300, bbox_inches='tight')
+    if save_filename:
+        plt.savefig('visualization/'+save_filename, dpi=300, bbox_inches='tight')
     plt.show()
 
 
 def save_history_json(history, filename):
+    """如果存在文件历史信息则在其后添加新history"""
     existing = {}
+    filename = 'visualization/' + filename
     if os.path.exists(filename):
         with open(filename, 'r') as f:
             existing = json.load(f)
@@ -138,9 +144,8 @@ def save_history_json(history, filename):
     print(f"History saved to {filename}")
 
 if __name__ == '__main__':
-    # paras = parasFinding()
-    # for i, para in enumerate(paras):
-    #     history = compare_paras(para)
-    #     save_history_json(history, f'./visualization/paras{i+1}.json')
-    #     plot_hyperparameter_performance(history, filename=f'./visualization/paras{i+1}.png')
-    visualize_history('models/model3072r128_10lr0.01rl0.001.npz.json', 'visualization/bestmodel.png')
+    paras = parasFinding()
+    for i, para in enumerate(paras):
+        history = compare_paras(para)
+        save_history_json(history, f'paras{i+1}.json')
+        plot_hyperparameter_performance(history, filename=f'paras{i+1}.png')

@@ -10,6 +10,7 @@ class NeuralNetwork:
     如果给了函数明则各参数由函数名决定
 
     注意如果要使用已有的模型, 请直接输入模型的名字而不带路径, 模型储存在models文件夹下
+    或者也可以完整输入模型参数，如果有该模型会自动读取
     """
     def __init__(self, layer_sizes=[3072, 256, 64, 10], activations='relu', learning_rate=0.01, reg_lambda=0.01, model_name=None):
         if model_name:
