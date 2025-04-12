@@ -18,6 +18,10 @@ def find_file_model():
     for file in os.listdir('./models'):
         if file.endswith('.npz'):
             files.append(file)
+    
+    for file in os.listdir('./models/bestModel'):
+        if file.endswith('.npz'):
+            files.append('bestModel/' + file)
     return files
         
 def test_file(name, acc=None):
@@ -31,11 +35,12 @@ def test_file(name, acc=None):
     label = f"LR={lr}, λ={reg}\nLayers={'->'.join(list(map(str, layer_sizes)))}"
     print("model of", label, ", accuracy:", acc)
 
+def findCompareHistory():
+    for names in find_file_visualization():
+        for name in names:
+            data = json.load(open('history/' + name + '.json', 'r'))
+            test_file(name, data['test_acc'])
 
 if __name__ == "__main__":
-    for name in find_file_visualization():
-        data = json.load(open(name))
-        for key in data:
-            test_file(key, data[key]['test_acc'])
     for name in find_file_model():
         test_file(name)

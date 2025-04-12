@@ -30,12 +30,14 @@ class NeuralNetwork:
             self.learning_rate = learning_rate
             self.name = encode_model_name(self.layer_sizes, self.activations, self.learning_rate, self.reg_lambda)
         
-        modelPath = './models/' + self.name
+        modelPath = 'models/' + self.name
         isFile = os.path.isfile(modelPath)
         # 初始化权重和偏置
         self.W = []
         self.b = []
+        self.exist = False
         if isFile:
+            self.exist = True
             data = np.load(modelPath)
             for i in range(self.layers):
                 self.W.append(data['W' + str(i+1)])
@@ -45,18 +47,35 @@ class NeuralNetwork:
                 W, b = self.generate_W_b(self.layer_sizes[i], self.layer_sizes[i + 1])
                 self.W.append(W)
                 self.b.append(b)
-            
+    
+    def saveModel(self, savePath=None):
+        save_dict = {}
+        for i, (w, b) in enumerate(zip(self.W, self.b)):
+            save_dict[f'W{i+1}'] = w
+            save_dict[f'b{i+1}'] = b
+        if savePath:
+            self.name = savePath + self.name
+            self.name.lstrip('models/')
+        else:
+            savePath = 'models/'
+        np.savez_compressed(savePath + self.name, **save_dict)     
     def getParas(self):
         paraDict = {'layer_sizes': self.layer_sizes, 'activations': self.activations, 'learning_rate': self.learning_rate, 'reg_lambda': self.reg_lambda}
         return paraDict
     
     def generate_W_b(self, size1, size2):
-            W = np.random.randn(size1, size2) * np.sqrt(1. / size1)
+            rng = np.random.default_rng(49)
+            W = rng.standard_normal((size1, size2)) * np.sqrt(1. / size1)
             b = np.zeros((1, size2))
             return W, b
         
     def deleteModel(self):
+        # 删除模型文件并且重新初始化
         os.remove('./models/' + self.name)
+        for i in range(self.layers):
+            W, b = self.generate_W_b(self.layer_sizes[i], self.layer_sizes[i + 1])
+            self.W.append(W)
+            self.b.append(b)
 
     def changeParas(self, learning_rate=None, reg_lambda=None):
         # 改变参数但不改变模型名字
@@ -166,8 +185,8 @@ def encode_model_name(layer_sizes=[3072, 1024, 512, 128, 32, 10], activations=['
     name_parts.append(f"{layer_sizes[-2]}_{layer_sizes[-1]}")  # model3072r1024r512s128r32_10
     
     # 组合超参数部分 (如 "learning_rate0.01rl0.1")
-    name_parts.append(f"lr{learning_rate:.4f}".rstrip('0').rstrip('.'))  # model3072r1024r512s128r32_10lr0.01
-    name_parts.append(f"rl{reg_lambda:.4f}".rstrip('0').rstrip('.')) # model3072r1024r512s128r32_10lr0.01rl0.1
+    name_parts.append(f"lr{learning_rate}".rstrip('0').rstrip('.'))  # model3072r1024r512s128r32_10lr0.01
+    name_parts.append(f"rl{reg_lambda}".rstrip('0').rstrip('.')) # model3072r1024r512s128r32_10lr0.01rl0.1
     
     return f"{''.join(name_parts)}.npz" # model3072r1024r512s128r32_10lr0.01rl0.1.npz
 
@@ -204,7 +223,7 @@ def decode_model_name(filename):
             if current:
                 segments.append(current)
                 current = ""
-            act.append(c)
+                act.append(c)
     if current:
         segments.append(current)
     

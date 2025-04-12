@@ -1,0 +1,12 @@
+[
+    "model3072r128_10lr0.01rl0.001.npz",
+    "model3072r128_10lr0.02rl0.001.npz",
+    "model3072r128_10lr0.03rl0.001.npz",
+    "model3072r128_10lr0.04rl0.001.npz",
+    "model3072r128_10lr0.05rl0.001.npz",
+    "model3072r128_10lr0.06rl0.001.npz",
+    "model3072r128_10lr0.07rl0.001.npz",
+    "model3072r128_10lr0.08rl0.001.npz",
+    "model3072r128_10lr0.09rl0.001.npz",
+    "model3072r128_10lr0.1rl0.001.npz"
+]

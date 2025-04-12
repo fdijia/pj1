@@ -11,7 +11,7 @@ test = CIFAR10('cifar-10-batches-py', train=False)
 X_test, y_test = test.data / 255.0, np.eye(10)[test.labels]
 
 
-def train_model(model, X_train=X_train, y_train=y_train, epochs=100, batch_size=64):
+def train_model(model, X_train=X_train, y_train=y_train, epochs=40, batch_size=64):
     best_val_acc = 0
     best_params = None
     learning_rate = model.learning_rate
@@ -57,38 +57,81 @@ def train_model(model, X_train=X_train, y_train=y_train, epochs=100, batch_size=
     
     # 保存最佳模型参数
     model.W, model.b = best_params['W'], best_params['b']
-    save_dict = {}
-    for i, (w, b) in enumerate(zip(best_params['W'], best_params['b'])):
-        save_dict[f'W{i+1}'] = w
-        save_dict[f'b{i+1}'] = b
-
-    np.savez_compressed('./models/' + model.name, **save_dict)
 
     return losses_history, val_acc_history
 
-def save_history(history, filename):
-    """自己提供相对路径以及文件名全称，包括.json"""
+def save_history(history, filename, overwrite=False):
+    """保存在history文件夹中，filename自己带.json"""
+    if overwrite:
+        pass
+    else:
+        existing = {}
+        filename = 'history/' + filename
+        if os.path.exists(filename):
+            with open(filename, 'r') as f:
+                existing = json.load(f)
+                history['train_loss'] += existing['train_loss']
+                history['val_acc'] += existing['val_acc']
     with open(filename, 'w') as f:
         json.dump(history, f, indent=4)
     print(f"History saved to {filename}")
+    
+    
+def plotHistory(history=None, fileName=None, saveFile=None):
+    """
+    history (dict): 如果为空则读取fileName中的数据
+    fileName (filepath)
+    saveFile (filepath): 为空则不保存
+    """
+    import matplotlib.pyplot as plt
+    if history is None:
+        if fileName is None:
+            raise ValueError("Either history or fileName must be provided.")
+        else:
+            with open(fileName, 'r') as f:
+                history = json.load(f)
+                
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    epochs = np.arange(1, len(history['val_acc']) + 1)
 
+    ax1.plot(epochs, history['val_acc'])
+    ax1.set_title('Validation Accuracy vs. Epochs', fontsize=14)
+    ax1.set_xlabel('Epochs', fontsize=12)
+    ax1.set_ylabel('Accuracy', fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    
+    ax2.plot(epochs, history['train_loss'])
+    ax2.set_title('Training Loss vs. Epochs', fontsize=14)
+    ax2.set_xlabel('Epochs', fontsize=12)
+    ax2.set_ylabel('Loss', fontsize=12)
+    ax2.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    if saveFile:
+        plt.savefig(saveFile)
+    else:
+        plt.show()
+
+    
 def train_best_model(para):
+    # 从头开始训练
     model = NeuralNetwork(**para)
-    learning_rate = [0.008, 0.003, 0.0008, 0.0003]
+    if model.exist:
+        model.deleteModel()
     train_loss = []
     val_acc = []
-    for lr in learning_rate:
-        model.changeParas(learning_rate=lr)
-        loss, acc = train_model(model, X_train, y_train, epochs=100, batch_size=200)
-        train_loss.extend(loss)
-        val_acc.extend(acc)
+    loss, acc = train_model(model, X_train, y_train, epochs=100, batch_size=200)
+    model.saveModel('models/bestModel/')
+    train_loss.extend(loss)
+    val_acc.extend(acc)
     test_acc = model.evaluate_model(X_test, y_test)
     history = {'train_loss': train_loss, 'val_acc': val_acc, 'test_acc': test_acc}
-    save_history(history, './models/' + model.name + '.json')
+    save_history(history, 'bestModel/' + model.name + '.json')
+    plotHistory(history, saveFile='models/bestModel/'+model.name+'.png')
 
 
 if __name__ == "__main__":
     # final train
-    para = {'layer_sizes': [3072, 128, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.01, 'reg_lambda': 0.001}
-    train_best_model(para)
+    best_para = {'layer_sizes': [3072, 512, 10], 'activations': ['relu', 'softmax'], 'learning_rate': 0.07, 'reg_lambda': 0.0005}
+    train_best_model(best_para)
    
